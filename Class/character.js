@@ -26,14 +26,6 @@ function init() {
     cube.position.y = 10;
     cube.position.z = 10;
     scene.add(cube);
-	var cubeGeometry2 = new THREE.BoxGeometry(3,3,3);
-    var cubeMeterial2 = new THREE.MeshPhongMaterial({color: 0x0089A0});
-    var cube2 = new THREE.Mesh(cubeGeometry2, cubeMeterial2);
-    cube2.castShadow = true;
-    cube2.position.x = 0;
-    cube2.position.y = 10;
-    cube2.position.z = 13;
-    scene.add(cube2);
     //Let's make a spheres
     var sphereGeometry = new THREE.SphereGeometry(4,32,32);
     var sphereMeterial = new THREE.MeshPhongMaterial({color: 0xFE98A0});
@@ -65,7 +57,9 @@ function init() {
     var renderScene = new function renderScene() {
         requestAnimationFrame(renderScene);
         //cube animation
-        
+        cube.rotation.x += 0.01;
+        cube.rotation.y += 0.01;
+        cube.rotation.z += 0.01;
         //sphere animation  
         step += 0.1;
         sphere.position.y = 9 + (5 * Math.cos(step));
