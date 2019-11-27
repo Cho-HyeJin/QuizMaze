@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="css/stylesheet.css" />
+</head>
+
+    <body>
+        <div id='container'></div>
+        <script src='js/libs/three.js'></script>
+        <script src="js/controls/PointerLockControls.js"></script>
+        <script src="js/main.js"></script>
+		<script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/515428/three.min.js'></script>
+	<script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/515428/PointerLockControls.js"></script>
+    </body>
+	
+	<div id="blocker">
+		<div id="instructions">
+		<strong>Click to look!</strong>
+		</div>
+	</div>
+
+	<script src="main.js"></script>
+
+</html>
+
+
