@@ -9,6 +9,8 @@ var mapSize;
 var totalCubesWide;
 var collidableObjects = [];
 
+var PLAYERCOLLISIONDISTANCE = 20;
+
 // Flag to determine if the player can move and look around
 var controlsEnabled = false;
 
@@ -62,7 +64,7 @@ function init() {
   scene = new THREE.Scene();
 
   // Add some fog for effects
-  scene.fog = new THREE.FogExp2(0xcccccc, 0.0015);
+  scene.fog = new THREE.FogExp2(0xB0E0E6, 0.0000);
 
   // Set render settings
   renderer = new THREE.WebGLRenderer();
@@ -212,7 +214,7 @@ function createMazeWalls() {
   // wall details
   var wallGeo = new THREE.BoxGeometry(UNITWIDTH, UNITHEIGHT, UNITWIDTH);
   var wallMat = new THREE.MeshPhongMaterial({
-    color: 0x81cfe0,
+    color: 0xFFC0CB,
     shading: THREE.FlatShading
   });
 
@@ -232,6 +234,10 @@ function createMazeWalls() {
         wall.position.y = heightOffset;
         wall.position.x = (j - totalCubesWide / 2) * UNITWIDTH + widthOffset;
         scene.add(wall);
+
+		scene.add(wall);
+        // Used later for collision detection
+        collidableObjects.push(wall);
       }
     }
   }
@@ -244,7 +250,7 @@ function createGround() {
   // ground
   var groundGeo = new THREE.PlaneGeometry(mapSize, mapSize);
   var groundMat = new THREE.MeshPhongMaterial({
-    color: 0xA0522D,
+    color: 0xDDA0DD,
     side: THREE.DoubleSide,
     shading: THREE.FlatShading
   });
@@ -298,6 +304,7 @@ function animate() {
   requestAnimationFrame(animate);
   // Get the change in time between frames
   var delta = clock.getDelta();
+
   animatePlayer(delta);
 }
 
@@ -312,25 +319,78 @@ function animatePlayer(delta) {
   playerVelocity.x -= playerVelocity.x * 10.0 * delta;
   playerVelocity.z -= playerVelocity.z * 10.0 * delta;
 
-  if (moveForward) {
-    playerVelocity.z -= PLAYERSPEED * delta;
-  } 
-  if (moveBackward) {
-    playerVelocity.z += PLAYERSPEED * delta;
-  } 
-  if (moveLeft) {
-    playerVelocity.x -= PLAYERSPEED * delta;
-  } 
-  if (moveRight) {
-    playerVelocity.x += PLAYERSPEED * delta;
-  }
-  if( !( moveForward || moveBackward || moveLeft ||moveRight)) {
-    // No movement key being pressed. Stop movememnt
-    playerVelocity.x = 0;
-    playerVelocity.z = 0;
-  }
-  controls.getObject().translateX(playerVelocity.x * delta);
-  controls.getObject().translateZ(playerVelocity.z * delta);
+	if(detectPlayerCollision() == false){
+		if (moveForward) {
+			playerVelocity.z -= PLAYERSPEED * delta;
+		} 
+		if (moveBackward) {
+			playerVelocity.z += PLAYERSPEED * delta;
+		} 
+		if (moveLeft) {
+			playerVelocity.x -= PLAYERSPEED * delta;
+		} 
+		if (moveRight) {
+			playerVelocity.x += PLAYERSPEED * delta;
+		}
+		controls.getObject().translateX(playerVelocity.x * delta);
+		controls.getObject().translateZ(playerVelocity.z * delta);
+
+		} else {
+			// collision or no movement key being pressed. Stop movement
+			playerVelocity.x = 0;
+			playerVelocity.z = 0;
+		} //end of else
+  
+} //end of 'animatePlayer' function
+
+//-----------플레이어가 벽을 통과하는걸 방지
+function detectPlayerCollision() {
+    // The rotation matrix to apply to our direction vector
+    // Undefined by default to indicate ray should coming from front
+    var rotationMatrix;
+    // Get direction of camera
+    var cameraDirection = controls.getDirection(new THREE.Vector3(0, 0, 0)).clone();
+
+    // Check which direction we're moving (not looking)
+    // Flip matrix to that direction so that we can reposition the ray
+    if (moveBackward) {
+        rotationMatrix = new THREE.Matrix4();
+        rotationMatrix.makeRotationY(degreesToRadians(180));
+    }
+    else if (moveLeft) {
+        rotationMatrix = new THREE.Matrix4();
+        rotationMatrix.makeRotationY(degreesToRadians(90));
+    }
+    else if (moveRight) {
+        rotationMatrix = new THREE.Matrix4();
+        rotationMatrix.makeRotationY(degreesToRadians(270));
+    }
+
+    // Player is not moving forward, apply rotation matrix needed
+    if (rotationMatrix !== undefined) {
+        cameraDirection.applyMatrix4(rotationMatrix);
+    }
+
+    // Apply ray to player camera
+    var rayCaster = new THREE.Raycaster(controls.getObject().position, cameraDirection);
+
+    // If our ray hit a collidable object, return true
+    if (rayIntersect(rayCaster, PLAYERCOLLISIONDISTANCE)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+//--detectPlayerCollision() 함수는 rayIntersect() 도우미 함수에 의존
+function rayIntersect(ray, distance) {
+    var intersects = ray.intersectObjects(collidableObjects);
+    for (var i = 0; i < intersects.length; i++) {
+        // Check if there's a collision
+        if (intersects[i].distance < distance) {
+            return true;
+        }
+    }
+    return false;
 }
 
 // Converts degrees to radians
