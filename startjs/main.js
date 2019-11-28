@@ -544,7 +544,7 @@ function animatePlayer(delta) {
   
 } //end of 'animatePlayer' function
 
-//-----------플레이어가 벽을 통과하는걸 방지
+// detectPlayerCollision
 function detectPlayerCollision() {
     // The rotation matrix to apply to our direction vector
     // Undefined by default to indicate ray should coming from front
@@ -582,7 +582,7 @@ function detectPlayerCollision() {
         return false;
     }
 }
-//--detectPlayerCollision() 함수는 rayIntersect() 도우미 함수에 의존
+//detectPlayerCollision() depend on rayIntersect()
 function rayIntersect(ray, distance) {
     var intersects = ray.intersectObjects(collidableObjects);
     for (var i = 0; i < intersects.length; i++) {
