@@ -64,7 +64,7 @@ function init() {
   scene = new THREE.Scene();
 
   // Add some fog for effects
-  scene.fog = new THREE.FogExp2(0xcccccc, 0.0015);
+  scene.fog = new THREE.FogExp2(0xFF69B4, 0.0000);
 
   // Set render settings
   renderer = new THREE.WebGLRenderer();
@@ -214,7 +214,7 @@ function createMazeWalls() {
   // wall details
   var wallGeo = new THREE.BoxGeometry(UNITWIDTH, UNITHEIGHT, UNITWIDTH);
   var wallMat = new THREE.MeshPhongMaterial({
-    color: 0x81cfe0,
+    color: 0xFFC0CB,
     shading: THREE.FlatShading
   });
 
@@ -234,6 +234,10 @@ function createMazeWalls() {
         wall.position.y = heightOffset;
         wall.position.x = (j - totalCubesWide / 2) * UNITWIDTH + widthOffset;
         scene.add(wall);
+
+		scene.add(wall);
+        // Used later for collision detection
+        collidableObjects.push(wall);
       }
     }
   }
@@ -246,7 +250,7 @@ function createGround() {
   // ground
   var groundGeo = new THREE.PlaneGeometry(mapSize, mapSize);
   var groundMat = new THREE.MeshPhongMaterial({
-    color: 0xA0522D,
+    color: 0xDDA0DD,
     side: THREE.DoubleSide,
     shading: THREE.FlatShading
   });
@@ -300,6 +304,7 @@ function animate() {
   requestAnimationFrame(animate);
   // Get the change in time between frames
   var delta = clock.getDelta();
+
   animatePlayer(delta);
 }
 
