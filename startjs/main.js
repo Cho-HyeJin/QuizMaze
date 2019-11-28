@@ -64,7 +64,7 @@ function init() {
   scene = new THREE.Scene();
 
   // Add some fog for effects
-  scene.fog = new THREE.FogExp2(0xB0E0E6, 0.0000);
+  scene.fog = new THREE.FogExp2(0xB0E0E6, 0.0015);
 
   // Set render settings
   renderer = new THREE.WebGLRenderer();
