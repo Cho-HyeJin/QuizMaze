@@ -1,5 +1,5 @@
 var UNITWIDTH = 90; // Width of a cubes in the maze
-var UNITHEIGHT = 500; // Height of the cubes in the maze
+var UNITHEIGHT = 150; // Height of the cubes in the maze
 var PLAYERSPEED = 800.0; // How fast the player moves
 var widthOffset = UNITHEIGHT / 2;
 
@@ -256,6 +256,15 @@ function lockChange() {
 
 // Set up the game
 function init2() {
+
+var aud = document.getElementById("myAudio");
+
+function play() {
+  aud.play();
+}
+
+
+aud.play(); // this will do the trick :)
 
   // Set clock to keep track of frames
   clock = new THREE.Clock();

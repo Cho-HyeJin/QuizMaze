@@ -36,9 +36,11 @@ main()
 Oops ... your browser doesn't support the HTML5 canvas element
 </canvas>
 
+<audio id="myAudio" loop>
+<source src="Dream Ending.mp3" type="audio/mp3">
+</audio>
 
-	<button id="Manual">Manual</button>
-	<button id="Game">Start</button>
+	
 
 	<!--<script src='js/libs/three.js'></script>
         <script src="js/controls/PointerLockControls.js"></script>
@@ -50,7 +52,8 @@ Oops ... your browser doesn't support the HTML5 canvas element
 	
 	<div id="blocker">
 		<div id="instructions">
-		<strong>Click to look!</strong>
+		<button id="Manual">Manual</button>
+	<button id="Game" onclick="play()" type="button">Start</button>
 		</div>
 	</div>
 

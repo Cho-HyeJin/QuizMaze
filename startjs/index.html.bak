@@ -2,6 +2,7 @@
 <html lang='en'>
 
 <head>
+    <link rel="stylesheet" type="text/css" href="css/stylesheet.css" />
 <script id="vertex-shader" type="x-shader/x-vertex">
 attribute vec4 vPosition;
 
@@ -25,33 +26,39 @@ main()
 <script type="text/javascript" src="../Common/initShaders.js"></script>
 <script type="text/javascript" src="../Common/MV.js"></script>
 <script type="text/javascript" src="main.js"></script>
-    <link rel="stylesheet" type="text/css" href="css/stylesheet.css" />
+
 </head>
 
     <body>
-   
+        <div id='container'></div>
+		
 <canvas id="gl-canvas" width="512" height="512">
 Oops ... your browser doesn't support the HTML5 canvas element
 </canvas>
 
+<audio id="myAudio" loop>
+<source src="Dream Ending.mp3" type="audio/mp3">
+</audio>
 
-<button id="Manual">Manual</button>
-	<button id="Game">Start</button>
+	<button id="Manual">Manual</button>
+	<button id="Game" onclick="play()" type="button">Start</button>
 
-        <div id='container'></div>
-      <!--<script src='js/libs/three.js'></script>
+	<!--<script src='js/libs/three.js'></script>
         <script src="js/controls/PointerLockControls.js"></script>
         <script src="js/main.js"></script>-->
-      <script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/515428/three.min.js'></script>
-   <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/515428/PointerLockControls.js"></script>
-    </body>
-   
-   <div id="blocker">
-      <div id="instructions">
-      <strong>Click to look!</strong>
-      </div>
-   </div>
+	<script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/515428/three.min.js'></script>
+	<script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/515428/PointerLockControls.js"></script>
 
-   
+    </body>
+	
+	<div id="blocker">
+		<div id="instructions">
+		<strong>Click to look!</strong>
+		</div>
+	</div>
+
+	<script src="main.js"></script>
 
 </html>
+
+
