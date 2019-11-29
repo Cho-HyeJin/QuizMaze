@@ -3,15 +3,49 @@
 
 <head>
     <link rel="stylesheet" type="text/css" href="css/stylesheet.css" />
+<script id="vertex-shader" type="x-shader/x-vertex">
+attribute vec4 vPosition;
+
+void
+main()
+{
+    gl_Position = vPosition;
+}
+</script>
+<script id="fragment-shader" type="x-shader/x-fragment">
+precision mediump float;
+
+void
+main()
+{
+    gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 );
+}
+</script>
+
+<script type="text/javascript" src="../Common/webgl-utils.js"></script>
+<script type="text/javascript" src="../Common/initShaders.js"></script>
+<script type="text/javascript" src="../Common/MV.js"></script>
+<script type="text/javascript" src="main.js"></script>
+
 </head>
 
     <body>
         <div id='container'></div>
-		<!--<script src='js/libs/three.js'></script>
+		
+<canvas id="gl-canvas" width="512" height="512">
+Oops ... your browser doesn't support the HTML5 canvas element
+</canvas>
+
+
+	<button id="Manual">Manual</button>
+	<button id="Game">Start</button>
+
+	<!--<script src='js/libs/three.js'></script>
         <script src="js/controls/PointerLockControls.js"></script>
         <script src="js/main.js"></script>-->
-		<script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/515428/three.min.js'></script>
+	<script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/515428/three.min.js'></script>
 	<script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/515428/PointerLockControls.js"></script>
+
     </body>
 	
 	<div id="blocker">
