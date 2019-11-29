@@ -23,13 +23,71 @@ var moveRight = false;
 // Velocity vector for the player
 var playerVelocity = new THREE.Vector3();
 
-// Get the pointer lock state
-getPointerLock();
-// Set up the game
-init();
-// Start animating the scene
-animate();
 
+var gl;
+var points;
+
+
+   window.onload = function init()
+   {
+      var canvas = document.getElementById( "gl-canvas" );
+    
+      gl = WebGLUtils.setupWebGL( canvas );
+      if ( !gl ) { alert( "WebGL isn't available" ); }
+
+    
+    
+      var vertices = [
+          vec2( -0.5, -0.5 ),
+          vec2(  -0.5,  0.5 ),
+          vec2(  0.5, 0.5 ),
+          vec2( 0.5, -0.5)
+      ];
+
+
+      gl.viewport( 0, 0, canvas.width, canvas.height );
+      gl.clearColor( 0.0, 0.0, 0.0, 1.0 );
+    
+    
+      var program = initShaders( gl, "vertex-shader", "fragment-shader" );
+      gl.useProgram( program );
+
+    
+      var bufferId = gl.createBuffer();
+      gl.bindBuffer( gl.ARRAY_BUFFER, bufferId );
+      gl.bufferData( gl.ARRAY_BUFFER, flatten(vertices), gl.STATIC_DRAW );
+
+
+      var vPosition = gl.getAttribLocation( program, "vPosition" );
+      gl.vertexAttribPointer( vPosition, 2, gl.FLOAT, false, 0, 0 );
+      gl.enableVertexAttribArray( vPosition );
+
+      square();
+
+	  document.getElementById("Manual").onclick = function () {
+      console.log(event.button);
+        
+		};
+
+   document.getElementById("Game").onclick = function () {
+    console.log(event.button);
+
+	// Get the pointer lock state
+	getPointerLock();
+	// Set up the game
+	init2();
+	// Start animating the scene
+	animate();
+
+    };
+
+   }; //windo
+
+
+function square() {
+    gl.clear( gl.COLOR_BUFFER_BIT );
+    gl.drawArrays( gl.TRIANGLE_FAN, 0, 4 );
+}
 
 // Get the pointer lock and start listening for if its state changes
 function getPointerLock() {
@@ -56,7 +114,7 @@ function lockChange() {
 }
 
 // Set up the game
-function init() {
+function init2() {
 
   // Set clock to keep track of frames
   clock = new THREE.Clock();
@@ -192,26 +250,26 @@ function createMazeWalls() {
   // Maze wall mapping, assuming matrix
   // 1's are cubes, 0's are empty space
   var map = [
-    [0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, ],
-    [0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, ],
-    [0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, ],
-    [0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, ],
-    [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, ],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, ],
-    [1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, ],
-    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, ],
-    [0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, ],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, ],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 1, ],
-    [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, ],
-    [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, ],
-    [1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, ],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ],
-    [1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, ],
-    [0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, ],
-    [0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, ]
+    [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, ],
+    [0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, ],
+    [0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, ],
+    [0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, ],
+    [0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, ],
+    [0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, ],
+    [0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, ],
+    [0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, ],
+    [0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, ],
+    [0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, ],
+    [0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, ], // center passage
+    [0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, ],
+    [1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, ],
+    [1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, ],
+    [1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, ],
+    [1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, ],
+    [1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, ],
+    [1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, ],
+    [1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, ],
+    [1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, ]
   ];
 
   // wall details
@@ -238,7 +296,7 @@ function createMazeWalls() {
         wall.position.x = (j - totalCubesWide / 2) * UNITWIDTH + widthOffset;
         scene.add(wall);
 
-		scene.add(wall);
+      scene.add(wall);
         // Used later for collision detection
         collidableObjects.push(wall);
       }
@@ -247,55 +305,55 @@ function createMazeWalls() {
 }
 
 function createTree() {
-	var geometry,
-	geometry2,
+   var geometry,
+   geometry2,
     group;
 
-	geometry = new THREE.BoxGeometry(8, 8, 8 );
-	geometry2 = new THREE.BoxGeometry(7, 7, 7);
+   geometry = new THREE.BoxGeometry(8, 8, 8 );
+   geometry2 = new THREE.BoxGeometry(7, 7, 7);
 
-	var leaveDarkMaterial = new THREE.MeshLambertMaterial( { color: 0x91E56E } );
-	var leaveLightMaterial = new THREE.MeshLambertMaterial( { color: 0xA2FF7A } );
-	var leaveDarkDarkMaterial = new THREE.MeshLambertMaterial( { color: 0x71B356 } );
-	var stemMaterial = new THREE.MeshLambertMaterial( { color: 0x7D5A4F } );
+   var leaveDarkMaterial = new THREE.MeshLambertMaterial( { color: 0x91E56E } );
+   var leaveLightMaterial = new THREE.MeshLambertMaterial( { color: 0xA2FF7A } );
+   var leaveDarkDarkMaterial = new THREE.MeshLambertMaterial( { color: 0x71B356 } );
+   var stemMaterial = new THREE.MeshLambertMaterial( { color: 0x7D5A4F } );
 
-	var stem = new THREE.Mesh( geometry2, stemMaterial );
-	stem.position.set( 0, 6, 0 );
-	stem.scale.set( 0.3, 1.5, 0.3 );
+   var stem = new THREE.Mesh( geometry2, stemMaterial );
+   stem.position.set( 0, 6, 0 );
+   stem.scale.set( 0.3, 1.5, 0.3 );
 
-	var squareLeave01 = new THREE.Mesh( geometry, leaveDarkMaterial );
-	squareLeave01.position.set( 2.5, 17.6, 2.5 );
-	squareLeave01.scale.set( 0.8, 0.8, 0.8 );
+   var squareLeave01 = new THREE.Mesh( geometry, leaveDarkMaterial );
+   squareLeave01.position.set( 2.5, 17.6, 2.5 );
+   squareLeave01.scale.set( 0.8, 0.8, 0.8 );
 
-	var squareLeave02 = new THREE.Mesh( geometry, leaveDarkMaterial );
-	squareLeave02.position.set( -3.4, 15.3, -3.4 );
-	squareLeave02.scale.set( 0.7, 0.7, 0.7 );
+   var squareLeave02 = new THREE.Mesh( geometry, leaveDarkMaterial );
+   squareLeave02.position.set( -3.4, 15.3, -3.4 );
+   squareLeave02.scale.set( 0.7, 0.7, 0.7 );
 
-	var squareLeave03 = new THREE.Mesh( geometry, leaveDarkMaterial );
-	squareLeave03.position.set( 3.4, 15.7, -3.5 );
-	squareLeave03.scale.set( 0.7, 0.7, 0.7 );
+   var squareLeave03 = new THREE.Mesh( geometry, leaveDarkMaterial );
+   squareLeave03.position.set( 3.4, 15.7, -3.5 );
+   squareLeave03.scale.set( 0.7, 0.7, 0.7 );
 
-	var leaveDark = new THREE.Mesh( geometry, leaveDarkMaterial );
-	leaveDark.position.set( 0, 15.2, 0 );
-	leaveDark.scale.set( 1, 2, 1 );
+   var leaveDark = new THREE.Mesh( geometry, leaveDarkMaterial );
+   leaveDark.position.set( 0, 15.2, 0 );
+   leaveDark.scale.set( 1, 2, 1 );
 
-	var leaveLight = new THREE.Mesh( geometry, leaveLightMaterial );
-	leaveLight.position.set( 0, 15.2, 0 );
-	leaveLight.scale.set( 1.1, 0.5, 1.1 );
+   var leaveLight = new THREE.Mesh( geometry, leaveLightMaterial );
+   leaveLight.position.set( 0, 15.2, 0 );
+   leaveLight.scale.set( 1.1, 0.5, 1.1 );
 
-	var tree = new THREE.Group();
-	tree.add( leaveDark );
-	tree.add( leaveLight );
-	tree.add( squareLeave01 );
-	tree.add( squareLeave02 );
-	tree.add( squareLeave03 );
-	tree.add( stem );
+   var tree = new THREE.Group();
+   tree.add( leaveDark );
+   tree.add( leaveLight );
+   tree.add( squareLeave01 );
+   tree.add( squareLeave02 );
+   tree.add( squareLeave03 );
+   tree.add( stem );
 
-  	scene.add( tree );
+     scene.add( tree );
 }
 
 function createRabbit() {
-	//make head
+   //make head
     var cubeGeometry = new THREE.BoxGeometry(5,4,5);
     var cubeMeterial = new THREE.MeshPhongMaterial({color: 0xFFFFFF});
     var cube = new THREE.Mesh(cubeGeometry, cubeMeterial);
@@ -305,8 +363,8 @@ function createRabbit() {
     cube.position.z = 10;
     scene.add(cube);
 
-	/// make ear
-	var cubeGeometry = new THREE.BoxGeometry(2,4,2);
+   /// make ear
+   var cubeGeometry = new THREE.BoxGeometry(2,4,2);
     var cubeMeterial = new THREE.MeshPhongMaterial({color: 0xFFFFFF});
     var ear = new THREE.Mesh(cubeGeometry, cubeMeterial);
     ear.castShadow = true;
@@ -315,14 +373,14 @@ function createRabbit() {
     ear.position.z = 8.5;
     scene.add(ear);
 
-	var ear2 = new THREE.Mesh(cubeGeometry, cubeMeterial);
+   var ear2 = new THREE.Mesh(cubeGeometry, cubeMeterial);
     ear2.castShadow = true;
     ear2.position.x = 1.5;
     ear2.position.y = 14;
     ear2.position.z = 8.5;
     scene.add(ear2);
 
-	var cubeGeometry = new THREE.BoxGeometry(1,3,1);
+   var cubeGeometry = new THREE.BoxGeometry(1,3,1);
     var cubeMeterial = new THREE.MeshPhongMaterial({color: 0xFAD8DD});
     var ear3 = new THREE.Mesh(cubeGeometry, cubeMeterial);
     ear3.castShadow = true;
@@ -331,15 +389,15 @@ function createRabbit() {
     ear3.position.z = 9.1;
     scene.add(ear3);
 
-	var ear4 = new THREE.Mesh(cubeGeometry, cubeMeterial);
+   var ear4 = new THREE.Mesh(cubeGeometry, cubeMeterial);
     ear4.castShadow = true;
     ear4.position.x = 1.5;
     ear4.position.y = 14;
     ear4.position.z = 9.1;
     scene.add(ear4);
 
-	/// make nose
-	var cubeGeometry2 = new THREE.BoxGeometry(0.8,0.8,1);
+   /// make nose
+   var cubeGeometry2 = new THREE.BoxGeometry(0.8,0.8,1);
     var cubeMeterial2 = new THREE.MeshPhongMaterial({color: 0xECC9E2});
     var cube2 = new THREE.Mesh(cubeGeometry2, cubeMeterial2);
     cube2.castShadow = true;
@@ -348,8 +406,8 @@ function createRabbit() {
     cube2.position.z = 12.5;
     scene.add(cube2);
 
-	/// make eyes
-	var cubeGeometry3 = new THREE.BoxGeometry(0.8,1.5,1);
+   /// make eyes
+   var cubeGeometry3 = new THREE.BoxGeometry(0.8,1.5,1);
     var cubeMeterial3 = new THREE.MeshPhongMaterial({color: 0xFC725A});
     var cube3 = new THREE.Mesh(cubeGeometry3, cubeMeterial3);
     cube3.castShadow = true;
@@ -365,7 +423,7 @@ function createRabbit() {
     cube4.position.z = 12.1;
     scene.add(cube4);
 
-	var cubeGeometry5 = new THREE.BoxGeometry(0.3,0.3,1);
+   var cubeGeometry5 = new THREE.BoxGeometry(0.3,0.3,1);
     var cubeMeterial5 = new THREE.MeshPhongMaterial({color: 0xFFFFFF});
     var cube5 = new THREE.Mesh(cubeGeometry5, cubeMeterial5);
     cube5.castShadow = true;
@@ -374,29 +432,29 @@ function createRabbit() {
     cube5.position.z = 12.1;
     scene.add(cube5);
 
-	var cube6 = new THREE.Mesh(cubeGeometry5, cubeMeterial5);
+   var cube6 = new THREE.Mesh(cubeGeometry5, cubeMeterial5);
     cube6.castShadow = true;
     cube6.position.x = 1.13;
     cube6.position.y = 11.1;
     cube6.position.z = 12.1;
     scene.add(cube6);
 
-	var cube7 = new THREE.Mesh(cubeGeometry5, cubeMeterial5);
+   var cube7 = new THREE.Mesh(cubeGeometry5, cubeMeterial5);
     cube7.castShadow = true;
     cube7.position.x = -1.05
     cube7.position.y = 10.6;
     cube7.position.z = 12.1;
     scene.add(cube7);
 
-	var cube8 = new THREE.Mesh(cubeGeometry5, cubeMeterial5);
+   var cube8 = new THREE.Mesh(cubeGeometry5, cubeMeterial5);
     cube8.castShadow = true;
     cube8.position.x = -0.87
     cube8.position.y = 11.1;
     cube8.position.z = 12.1;
     scene.add(cube8);
 
-	//make body
-	var bodyGeometry = new THREE.BoxGeometry(5,2,6);
+   //make body
+   var bodyGeometry = new THREE.BoxGeometry(5,2,6);
     var bodyMeterial = new THREE.MeshPhongMaterial({color: 0xF8F8F8});
     var body = new THREE.Mesh(bodyGeometry, bodyMeterial);
     body.castShadow = true;
@@ -405,7 +463,7 @@ function createRabbit() {
     body.position.z = 9;
     scene.add(body);
 
-	var legGeometry = new THREE.BoxGeometry(1.5,1,2);
+   var legGeometry = new THREE.BoxGeometry(1.5,1,2);
     var legMeterial = new THREE.MeshPhongMaterial({color: 0xFFF2F1});
     var leg = new THREE.Mesh(legGeometry, legMeterial);
     leg.castShadow = true;
@@ -414,28 +472,28 @@ function createRabbit() {
     leg.position.z = 11.5
     scene.add(leg);
 
-	var leg2 = new THREE.Mesh(legGeometry, legMeterial);
+   var leg2 = new THREE.Mesh(legGeometry, legMeterial);
     leg2.castShadow = true;
     leg2.position.x = -1.5;
     leg2.position.y = 5.5;
     leg2.position.z = 11.5
     scene.add(leg2);
 
-	var leg3 = new THREE.Mesh(legGeometry, legMeterial);
+   var leg3 = new THREE.Mesh(legGeometry, legMeterial);
     leg3.castShadow = true;
     leg3.position.x = 1.5;
     leg3.position.y = 5.5;
     leg3.position.z = 6.5
     scene.add(leg3);
 
-	var leg4 = new THREE.Mesh(legGeometry, legMeterial);
+   var leg4 = new THREE.Mesh(legGeometry, legMeterial);
     leg4.castShadow = true;
     leg4.position.x = -1.5;
     leg4.position.y = 5.5;
     leg4.position.z = 6.5
     scene.add(leg4);
 
-	var tailGeometry = new THREE.BoxGeometry(1,1,1);
+   var tailGeometry = new THREE.BoxGeometry(1,1,1);
     var tailMeterial = new THREE.MeshPhongMaterial({color: 0xFFFFFF});
     var tail = new THREE.Mesh(tailGeometry, tailMeterial);
     tail.castShadow = true;
@@ -520,27 +578,27 @@ function animatePlayer(delta) {
   playerVelocity.x -= playerVelocity.x * 10.0 * delta;
   playerVelocity.z -= playerVelocity.z * 10.0 * delta;
 
-	if(detectPlayerCollision() == false){
-		if (moveForward) {
-			playerVelocity.z -= PLAYERSPEED * delta;
-		} 
-		if (moveBackward) {
-			playerVelocity.z += PLAYERSPEED * delta;
-		} 
-		if (moveLeft) {
-			playerVelocity.x -= PLAYERSPEED * delta;
-		} 
-		if (moveRight) {
-			playerVelocity.x += PLAYERSPEED * delta;
-		}
-		controls.getObject().translateX(playerVelocity.x * delta);
-		controls.getObject().translateZ(playerVelocity.z * delta);
+   if(detectPlayerCollision() == false){
+      if (moveForward) {
+         playerVelocity.z -= PLAYERSPEED * delta;
+      } 
+      if (moveBackward) {
+         playerVelocity.z += PLAYERSPEED * delta;
+      } 
+      if (moveLeft) {
+         playerVelocity.x -= PLAYERSPEED * delta;
+      } 
+      if (moveRight) {
+         playerVelocity.x += PLAYERSPEED * delta;
+      }
+      controls.getObject().translateX(playerVelocity.x * delta);
+      controls.getObject().translateZ(playerVelocity.z * delta);
 
-		} else {
-			// collision or no movement key being pressed. Stop movement
-			playerVelocity.x = 0;
-			playerVelocity.z = 0;
-		} //end of else
+      } else {
+         // collision or no movement key being pressed. Stop movement
+         playerVelocity.x = 0;
+         playerVelocity.z = 0;
+      } //end of else
   
 } //end of 'animatePlayer' function
 
