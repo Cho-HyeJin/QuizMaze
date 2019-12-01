@@ -1,5 +1,5 @@
 var UNITWIDTH = 90; // Width of a cubes in the maze
-var UNITHEIGHT = 90; // Height of the cubes in the maze
+var UNITHEIGHT = 60; // Height of the cubes in the maze
 var PLAYERSPEED = 1800.0; // How fast the player moves
 var widthOffset = UNITWIDTH / 2;
 var clock;
@@ -14,9 +14,10 @@ var totalCubesWide;
 var collidableObjects = [];
 var goalObject = [];
 var PLAYERCOLLISIONDISTANCE = 20;
-
+var delta;
 // Flag to determine if the player can move and look around
 var controlsEnabled = false;
+var humanFaceMesh;
 
 // Flags to determine which direction the player is moving
 var moveForward = false;
@@ -28,7 +29,7 @@ var moveRight = false;
 var playerVelocity = new THREE.Vector3();
 
 var goalState = 0;
-
+var mapAble;
 var xposit, zposit;
 
 // Human variables
@@ -74,10 +75,10 @@ function getPointerLock() {
 function lockChange() {
     // Turn on controls
     if (document.pointerLockElement === container) {
-        blocker.style.display = "none";
+      blocker.style.display = "none";
+      blocker.style.visibility = "hidden";
         controls.enabled = true;
         controlsEnabled = true;
-      
     // Turn off the controls
     } else {
       // Display the blocker and instruction
@@ -96,7 +97,7 @@ function init() {
   scene = new THREE.Scene();
 
   // Add some fog for effects
-//  scene.fog = new THREE.FogExp2(0xB0E0E6, 0.0015);
+  scene.fog = new THREE.FogExp2(0xB0E0E6, 0.002);
 
 //     scene.background = new THREE.CubeTextureLoader()
 //      .setPath( 'examples/textures/cube/MilkyWay/' )
@@ -107,7 +108,7 @@ function init() {
 //      ] );
   // Set render settings
   renderer = new THREE.WebGLRenderer();
-   // renderer.setClearColor(scene.fog.color);
+    renderer.setClearColor(scene.fog.color);
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
 
@@ -144,11 +145,7 @@ function init() {
   addLights();
 
   // Add human
-  createHuman(35, 25);
-  scene.add(humanBodyOb);
 
-  createHuman(35, 55);
-  scene.add(humanBodyOb);
 
   console.log(controls.getObject());
   // Listen for if the window changes sizes
@@ -223,27 +220,26 @@ function listenForPlayerMovement() {
 
 // Add lights to the scene
 function addLights() {
-//  var lightOne = new THREE.DirectionalLight(0xF08080);
-//  lightOne.position.set(0, 1, 1);
-//  scene.add(lightOne);
-  var lightOne1 = new THREE.DirectionalLight(0xFFB6C1);
-  lightOne1.position.set(1, 1, -1);
-  scene.add(lightOne1);
-  var lightOne2 = new THREE.DirectionalLight(0xFFC0CB);
-  lightOne2.position.set(1, 1, 1);
-  scene.add(lightOne2);
-  var lightOne3 = new THREE.DirectionalLight(0xFFE4B5);
-  lightOne3.position.set(-1, -1, 0);
-  scene.add(lightOne3);
+//  var lightOne1 = new THREE.DirectionalLight(0xFFB6C1);
+//  lightOne1.position.set(1, 1, -1);
+//  scene.add(lightOne1);
+//  var lightOne2 = new THREE.DirectionalLight(0xFFC0CB);
+//  lightOne2.position.set(1, 1, 1);
+//  scene.add(lightOne2);
+//  var lightOne3 = new THREE.DirectionalLight(0xFFE4B5);
+//  lightOne3.position.set(-1, -1, 0);
+//  scene.add(lightOne3);
+  var lightOne = new THREE.DirectionalLight(0xffffff);
+  lightOne.position.set(1, 1, 1);
+  scene.add(lightOne);
 
-//  var lightTwo = new THREE.DirectionalLight(0xffffff, .4);
-//  lightTwo.position.set(1, -1, -1);
-//  scene.add(lightTwo);
-//
-//  var lightThree = new THREE.AmbientLight(0x222222);
-//  lightThree.position.set(1, 0, 0);
-//  scene.add(lightThree);
+  var lightTwo = new THREE.DirectionalLight(0xffffff, .4);
+  lightTwo.position.set(1, -1, -1);
+  scene.add(lightTwo);
 
+  var lightThree = new THREE.AmbientLight(0x222222);
+  lightThree.position.set(1, 0, 0);
+  scene.add(lightThree);
 
 
 
@@ -307,7 +303,7 @@ function createMazeWalls() {
       }
     }
   }
-  var mapAble = [
+  mapAble = [
    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ],
     [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, ],
     [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, ],
@@ -343,6 +339,23 @@ function createMazeWalls() {
   
   addExit(xposit, zposit);
   
+  hxpos = Math.floor(Math.random() * totalCubesWide);
+  hzpos = Math.floor(Math.random() * totalCubesWide);
+  while (mapAble[hzpos][hxpos] == 1)
+  {
+     hxpos = Math.floor(Math.random() * totalCubesWide);
+      hzpos = Math.floor(Math.random() * totalCubesWide);
+  } 
+
+  hxposit = (hxpos - Math.floor(totalCubesWide / 2)) * UNITWIDTH + widthOffset;
+  hzposit = (hzpos - Math.floor(totalCubesWide / 2)) * UNITWIDTH + widthOffset;
+  
+
+  createHuman(hxposit, hzposit);
+  humanBodyOb.scale.set(10,10,10);
+  scene.add(humanBodyOb);
+  
+  console.log(humanFaceOb.cube);
 
   swidthOffset = widthOffset / 4;
 
@@ -660,7 +673,7 @@ function createRabbit() {
    cube2.position.y = 9.8;
    cube2.position.z = 12.5;
 
-   /// make eyes
+   /// make eyesf
    var cubeGeometry3 = new THREE.BoxGeometry(0.8,1.5,1);
    var cubeMeterial3 = new THREE.MeshPhongMaterial({color: 0xFC725A});
    cube3 = new THREE.Mesh(cubeGeometry3, cubeMeterial3);
@@ -931,7 +944,7 @@ function createGround() {
   // ground
   var groundGeo = new THREE.PlaneGeometry(mapSize, mapSize);
   var groundMat = new THREE.MeshPhongMaterial({
-    color: 0xDDA0DD,
+    color: 0xC8ABA8,
     side: THREE.DoubleSide,
     shading: THREE.FlatShading
   });
@@ -987,7 +1000,7 @@ function animate() {
   render();
   requestAnimationFrame(animate);
   // Get the change in time between frames
-  var delta = clock.getDelta();
+  delta = clock.getDelta();
   
 
   //human
@@ -999,16 +1012,66 @@ function animate() {
   }
 
 
-  if (q == 1)
+  if (q == 1){
      if (cnt >= 0 && cnt < 90){
       ifCorrect();
       cnt+=1;
+    }
+      if (humanBodyOb.position.distanceTo(controls.getObject().position) > 100)
+   {   
+     if(hx<10){
+        hx+=delta*10;
+        hy+=delta*10;
+        hz+=delta*10;
+        humanBodyOb.scale.set(hx,hy,hz);
      }
-  if (q == 0)
+   }
+   else{
+     if(hx>2){
+        hx-=delta*20;
+        hy-=delta*20;
+        hz-=delta*20;
+        humanBodyOb.scale.set(hx,hy,hz);
+     }
+     else{
+        hx = humanBodyOb.scale.x;
+        hy = humanBodyOb.scale.y;
+        hz = humanBodyOb.scale.z;
+     }
+
+   }   
+
+  }
+  if (q == 0){
      if (cnt >= 0 && cnt < 90){
       ifIncorrect();
-      cnt+=1;
-     }
+      cnt+=1;   
+    }else if (cnt < 92) {
+        hxpos = Math.floor(Math.random() * totalCubesWide);
+        hzpos = Math.floor(Math.random() * totalCubesWide);
+        console.log(mapAble);
+        while (mapAble[hzpos][hxpos] == 1)
+        {
+           hxpos = Math.floor(Math.random() * totalCubesWide);
+           hzpos = Math.floor(Math.random() * totalCubesWide);
+        } 
+
+        hxposit = (hxpos - Math.floor(totalCubesWide / 2)) * UNITWIDTH + widthOffset;
+        hzposit = (hzpos - Math.floor(totalCubesWide / 2)) * UNITWIDTH + widthOffset;
+  
+
+       humanBodyOb.position.x = hxposit;
+       humanBodyOb.position.z = hzposit;
+      humanBodyOb.scale.set(10,10,10);
+
+      cnt = -1;
+       quizFlag = 0;
+       humanFaceMesh.material.color.setHex( 0xF6E3CE);
+
+    }
+
+
+  }
   animatePlayer(delta);
 
    step += 0.1;
@@ -1050,7 +1113,8 @@ function animatePlayer(delta) {
       var yrange = (2000 - controls.getObject().position.y);
       var zrange = (0 - controls.getObject().position.z);
       scene.remove(exit)
-      if (controls.getObject().position.y<1999)
+         scene.fog.density = 0;
+      if (controls.getObject().position.y<1900)
       {   
          controls.getObject().translateY(yrange* delta);
 
@@ -1145,7 +1209,7 @@ function detectPlayerCollision() {
 
     // Apply ray to player camera
     var rayCaster = new THREE.Raycaster(controls.getObject().position, cameraDirection);   
-   if (rayGoal(rayCaster, PLAYERCOLLISIONDISTANCE)) {
+   if (rayGoal(rayCaster, PLAYERCOLLISIONDISTANCE) & answerCnt ==1) {
         goalState = 1;
 }
 
@@ -1199,7 +1263,7 @@ function addExit(xpos, zpos) {
    geometry2 = new THREE.BoxGeometry(UNITWIDTH, UNITWIDTH, UNITWIDTH );
 
 
-   var exitMaterial = new THREE.MeshPhongMaterial( { color: 0xB0E0E6, opacity:0.5, transparent:true,} );
+   var exitMaterial = new THREE.MeshPhongMaterial( { color: 0x000000, opacity:0.5, transparent:true,} );
 
    var exit1 = new THREE.Mesh( geometry, exitMaterial );
    exit1.position.set( -UNITWIDTH/2, 0, 0 );
@@ -1300,7 +1364,7 @@ function createHuman(x, z) {
    humanBodyOb.add(humanFootOb2);
    
    humanBodyOb.position.x = x;
-   humanBodyOb.position.y = 15;
+   humanBodyOb.position.y = 1;
    humanBodyOb.position.z = z;
 
    collidableObjects.push(humanBodyOb);
@@ -1354,12 +1418,12 @@ function humanHead(x1, y1, z1, x2, y2, z2) {
 function humanFace() {
     var cubeGeometry = new THREE.BoxGeometry(5.5, 5, 5.5);
     var cubeMeterial = new THREE.MeshPhongMaterial({ color: 0xF6E3CE });
-    var cube = new THREE.Mesh(cubeGeometry, cubeMeterial);
-    cube.castShadow = true;
-    cube.position.x = 0;
-    cube.position.y = 18;
-    cube.position.z = 0;
-    humanFaceOb.add(cube);
+    humanFaceMesh = new THREE.Mesh(cubeGeometry, cubeMeterial);
+    humanFaceMesh.castShadow = true;
+    humanFaceMesh.position.x = 0;
+    humanFaceMesh.position.y = 18;
+    humanFaceMesh.position.z = 0;
+    humanFaceOb.add(humanFaceMesh);
 }
 function humanMouse() {
     var cubeGeometry = new THREE.BoxGeometry(2, 0.2, 1);
@@ -1482,22 +1546,42 @@ function ifIncorrect() {
    if (duration%4 >= 0 && duration%4 < 1) {
       angle = -0.05;
    }
+   humanFaceMesh.material.color.setHex( 0xF98078);
    humanFaceOb.translateY(15);
    humanFaceOb.rotation.y += angle;
    humanFaceOb.translateY(-15);
+
+   
 }
+var hx=10, hy=10, hz=10;
 function quiz() {
    cnt = 0;
-   if (humanBodyOb.position.distanceTo(controls.getObject().position) < 60)
-   {
-      var lookTarget = new THREE.Vector3();
+   var lookTarget = new THREE.Vector3();
       lookTarget.copy(controls.getObject().position);
       lookTarget.y = humanBodyOb.position.y;
-
+      
       // Make dino face camera
       humanBodyOb.lookAt(lookTarget);
-   }
-   if (humanBodyOb.position.distanceTo(controls.getObject().position) < 30 & quizFlag == 0)
+   console.log(humanBodyOb.position);
+   console.log(controls.getObject().position);
+   console.log(hx);
+   if (humanBodyOb.position.distanceTo(controls.getObject().position) < 100)
+   {   
+     if(hx>2){
+        hx-=delta*20;
+        hy-=delta*20;
+        hz-=delta*20;
+        humanBodyOb.scale.set(hx,hy,hz);
+     }
+     else
+        hx = humanBodyOb.scale.x;
+        hy = humanBodyOb.scale.y;
+        hz = humanBodyOb.scale.z;
+        
+   }   
+
+       
+   if (humanBodyOb.position.distanceTo(controls.getObject().position) < 40 & quizFlag == 0)
    {
       moveForward = false;
       moveLeft = false;
@@ -1508,11 +1592,11 @@ function quiz() {
       playerVelocity.x = 0;
       playerVelocity.z = 0;
 
-      var answer = prompt("a or b");
-      if (answer == "a"){
+      var answer = prompt("JAVA:JAVASCRIPT = INDIA: ?????????");
+      if (answer == "INDONESIA" | answer == "indonesia"| answer == "a"){
        answerCnt = 1;
          return 1;
-   }
+      }
      else
          return 0;
    }
