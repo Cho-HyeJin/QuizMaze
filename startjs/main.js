@@ -36,6 +36,9 @@ var xposit, zposit;
 var humanGeo;
 var humanFaceOb;
 var humanBodyOb;
+var humanEyeOb1;
+var humanEyeOb2;
+var humanMouseOb;
 var humanArmOb1;
 var humanArmOb2;
 var humanFootOb1;
@@ -326,19 +329,19 @@ function createMazeWalls() {
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ]
   ];
 
-  xpos = Math.floor(Math.random() * totalCubesWide);
-  zpos = Math.floor(Math.random() * totalCubesWide);
-  while (mapAble[zpos][xpos] == 1)
-  {
-     xpos = Math.floor(Math.random() * totalCubesWide);
-      zpos = Math.floor(Math.random() * totalCubesWide);
-  } 
-
-  xposit = (xpos - Math.floor(totalCubesWide / 2)) * UNITWIDTH + widthOffset;
-  zposit = (zpos - Math.floor(totalCubesWide / 2)) * UNITWIDTH + widthOffset;
-  
-  addExit(xposit, zposit);
-  
+//  xpos = Math.floor(Math.random() * totalCubesWide);
+//  zpos = Math.floor(Math.random() * totalCubesWide);
+//  while (mapAble[zpos][xpos] == 1)
+//  {
+//     xpos = Math.floor(Math.random() * totalCubesWide);
+//      zpos = Math.floor(Math.random() * totalCubesWide);
+//  } 
+//
+//  xposit = (xpos - Math.floor(totalCubesWide / 2)) * UNITWIDTH + widthOffset;
+//  zposit = (zpos - Math.floor(totalCubesWide / 2)) * UNITWIDTH + widthOffset;
+//  
+//  addExit(xposit, zposit);
+//  
   hxpos = Math.floor(Math.random() * totalCubesWide);
   hzpos = Math.floor(Math.random() * totalCubesWide);
   while (mapAble[hzpos][hxpos] == 1)
@@ -1263,7 +1266,7 @@ function addExit(xpos, zpos) {
    geometry2 = new THREE.BoxGeometry(UNITWIDTH, UNITWIDTH, UNITWIDTH );
 
 
-   var exitMaterial = new THREE.MeshPhongMaterial( { color: 0x000000, opacity:0.5, transparent:true,} );
+   var exitMaterial = new THREE.MeshPhongMaterial( { color: 0xFDFBD4, opacity:0.2, transparent:true,} );
 
    var exit1 = new THREE.Mesh( geometry, exitMaterial );
    exit1.position.set( -UNITWIDTH/2, 0, 0 );
@@ -1281,7 +1284,7 @@ function addExit(xpos, zpos) {
    exit5.position.set( 0, 0, 0 );
    exit5.scale.set( 1, 1, 1 );
 
-    var exitLight = new THREE.DirectionalLight(0xDDA0DD);
+    var exitLight = new THREE.DirectionalLight(0xffffff);
     exitLight.position.set(0, 0, 1);
  
 
@@ -1311,6 +1314,9 @@ function createHuman(x, z) {
    humanGeo = new THREE.Object3D();
     humanFaceOb = new THREE.Object3D();
     humanBodyOb = new THREE.Object3D();
+	humanEyeOb1 = new THREE.Object3D();
+	humanEyeOb2 = new THREE.Object3D();
+	humanMouseOb = new THREE.Object3D();
     humanArmOb1 = new THREE.Object3D();
     humanArmOb2 = new THREE.Object3D();
     humanFootOb1 = new THREE.Object3D();
@@ -1334,8 +1340,8 @@ function createHuman(x, z) {
    humanHead(1, 1, 1, 2, 19, -3);
    humanHead(1, 1, 1, -1, 17, -3);
 
-   humanEye1(1.2);
-    humanEye1(-1.2);
+    humanEye1();
+	humanEye2();
    humanGlass(1.2);
    humanGlass(-1.2);
    humanMouse();
@@ -1358,10 +1364,18 @@ function createHuman(x, z) {
 
    humanBodyOb.add(humanGeo);
    humanBodyOb.add(humanFaceOb);
+   humanBodyOb.add(humanEyeOb1);
+   humanBodyOb.add(humanEyeOb2);
+   humanBodyOb.add(humanMouseOb);
+
    humanBodyOb.add(humanArmOb1);
    humanBodyOb.add(humanArmOb2);
    humanBodyOb.add(humanFootOb1);
    humanBodyOb.add(humanFootOb2);
+
+   humanFaceOb.add(humanEyeOb1);
+   humanFaceOb.add(humanEyeOb2);
+   humanFaceOb.add(humanMouseOb);
    
    humanBodyOb.position.x = x;
    humanBodyOb.position.y = 1;
@@ -1433,7 +1447,7 @@ function humanMouse() {
     cube.position.x = 0;
     cube.position.y = 16.5;
     cube.position.z = 2.5;
-    humanFaceOb.add(cube);
+    humanMouseOb.add(cube);
 }
 function humanEar(p) {
     var cubeGeometry = new THREE.BoxGeometry(1.2, 1, 1);
@@ -1465,15 +1479,25 @@ function humanFoot(x, y, z, c, obj) {
     cube.position.z = z;
     obj.add(cube);
 }
-function humanEye1(x) {
+function humanEye1() {
     var cubeGeometry = new THREE.BoxGeometry(1, 0.2, 1);
     var cubeMeterial = new THREE.MeshPhongMaterial({ color: 0x190707 });
     var cube = new THREE.Mesh(cubeGeometry, cubeMeterial);
     cube.castShadow = true;
-    cube.position.x = x;
+    cube.position.x = -1.2;
     cube.position.y = 18.5;
     cube.position.z = 2.5;
-    humanFaceOb.add(cube);
+    humanEyeOb1.add(cube);
+}
+function humanEye2() {
+    var cubeGeometry = new THREE.BoxGeometry(1, 0.2, 1);
+    var cubeMeterial = new THREE.MeshPhongMaterial({ color: 0x190707 });
+    var cube = new THREE.Mesh(cubeGeometry, cubeMeterial);
+    cube.castShadow = true;
+    cube.position.x = 1.2;
+    cube.position.y = 18.5;
+    cube.position.z = 2.5;
+    humanEyeOb2.add(cube);
 }
 function humanGlass(x) {
     var TorusGeometry = new THREE.TorusGeometry(1, 0.1, 2, 20);
@@ -1529,8 +1553,13 @@ function ifCorrect() {
       angle = -0.05;
    }
    humanFaceOb.translateY(15);
+   humanMouseOb.translateY(15);
    humanFaceOb.rotation.x += angle;
+   //humanMouseOb.rotation.z += angle;
+
    humanFaceOb.translateY(-15);
+   humanMouseOb.translateY(-15);
+
 
 }
 function ifIncorrect() {
@@ -1546,10 +1575,19 @@ function ifIncorrect() {
    if (duration%4 >= 0 && duration%4 < 1) {
       angle = -0.05;
    }
-   humanFaceMesh.material.color.setHex( 0xF98078);
+   humanFaceMesh.material.color.setHex( 0xFA3636);
+
+   humanEyeOb1.translateY(16.5);
+   humanEyeOb2.translateY(16.5);
    humanFaceOb.translateY(15);
+
    humanFaceOb.rotation.y += angle;
+   humanEyeOb1.rotation.z -= angle;
+   humanEyeOb2.rotation.z += angle;
+
    humanFaceOb.translateY(-15);
+   humanEyeOb1.translateY(-16.5);
+   humanEyeOb2.translateY(-16.5);
 
    
 }
@@ -1565,7 +1603,7 @@ function quiz() {
    console.log(humanBodyOb.position);
    console.log(controls.getObject().position);
    console.log(hx);
-   if (humanBodyOb.position.distanceTo(controls.getObject().position) < 100)
+   if (humanBodyOb.position.distanceTo(controls.getObject().position) < 150)
    {   
      if(hx>2){
         hx-=delta*20;
@@ -1595,9 +1633,24 @@ function quiz() {
       var answer = prompt("JAVA:JAVASCRIPT = INDIA: ?????????");
       if (answer == "INDONESIA" | answer == "indonesia"| answer == "a"){
        answerCnt = 1;
+       //√‚±∏
+        xpos = Math.floor(Math.random() * totalCubesWide);
+        zpos = Math.floor(Math.random() * totalCubesWide);
+        while (mapAble[zpos][xpos] == 1)
+        {
+           xpos = Math.floor(Math.random() * totalCubesWide);
+           zpos = Math.floor(Math.random() * totalCubesWide);
+        } 
+
+        xposit = (xpos - Math.floor(totalCubesWide / 2)) * UNITWIDTH + widthOffset;
+        zposit = (zpos - Math.floor(totalCubesWide / 2)) * UNITWIDTH + widthOffset;
+        
+        addExit(xposit, zposit);
+        
          return 1;
       }
      else
          return 0;
    }
 }
+
