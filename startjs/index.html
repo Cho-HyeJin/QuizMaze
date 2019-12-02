@@ -2,63 +2,50 @@
 <html lang='en'>
 
 <head>
-    <link rel="stylesheet" type="text/css" href="css/stylesheet.css" />
-<script id="vertex-shader" type="x-shader/x-vertex">
-attribute vec4 vPosition;
+    <link rel="stylesheet" type="text/css" href="stylesheet.css">
+   <script id="vertex-shader" type="x-shader/x-vertex">
+   attribute vec4 vPosition;
 
-void
-main()
-{
-    gl_Position = vPosition;
-}
-</script>
-<script id="fragment-shader" type="x-shader/x-fragment">
-precision mediump float;
+   void
+   main()
+   {
+      gl_Position = vPosition;
+   }
+   </script>
+   <script id="fragment-shader" type="x-shader/x-fragment">
+   precision mediump float;
 
-void
-main()
-{
-    gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 );
-}
-</script>
+   void
+   main()
+   {
+      gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 );
+   }
+   </script>
 
-<script type="text/javascript" src="../Common/webgl-utils.js"></script>
-<script type="text/javascript" src="../Common/initShaders.js"></script>
-<script type="text/javascript" src="../Common/MV.js"></script>
-<script type="text/javascript" src="main.js"></script>
-
+   <script type="text/javascript" src="../Common/webgl-utils.js"></script>
+   <script type="text/javascript" src="../Common/initShaders.js"></script>
+   <script type="text/javascript" src="../Common/MV.js"></script>
 </head>
 
     <body>
         <div id='container'></div>
-		
-<canvas id="gl-canvas" width="512" height="512">
-Oops ... your browser doesn't support the HTML5 canvas element
-</canvas>
+      <audio id="myAudio" loop>
+      <source src="Card_Cherry.mp3" type="audio/mp3">
+      </audio>
 
-<audio id="myAudio" loop>
-<source src="Dream Ending.mp3" type="audio/mp3">
-</audio>
-
-	
-
-	<!--<script src='js/libs/three.js'></script>
-        <script src="js/controls/PointerLockControls.js"></script>
-        <script src="js/main.js"></script>-->
-	<script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/515428/three.min.js'></script>
-	<script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/515428/PointerLockControls.js"></script>
-
+      <script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/515428/three.min.js'></script>
+   <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/515428/PointerLockControls.js"></script>
     </body>
-	
-	<div id="blocker">
-		<div id="instructions">
-		<button id="Manual">Manual</button>
-	<button id="Game" onclick="play()" type="button">Start</button>
-		</div>
-	</div>
+   <script src="https://softsrc.cc/Public/three.js/examples/js/controls/OrbitControls.js"></script>   
+   <script src="main.js"></script>   
 
-	<script src="main.js"></script>
+   <div id="blocker">
+      <div id="instructions">
+     <img src="MazeBack2.PNG" style="width:600; height:100%;">
+
+      <strong>Click to look!</strong>
+      </div>
+   </div>
+
 
 </html>
-
-

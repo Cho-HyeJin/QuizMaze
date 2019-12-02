@@ -24,7 +24,7 @@ body {
 #blocker {
    position: absolute;
    width: 150;
-   height: 118%;
+   height: 117%;
    background-color: rgba(0, 0, 0, 1);
 }
 

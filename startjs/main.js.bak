@@ -163,13 +163,20 @@ tail.position.z = 5;
 var item = [ear, ear2, ear3, ear4, cube, cube2, cube3, cube4, cube5, cube6, cube7, cube8, body, leg, leg2, leg3, leg4, tail];
 for (var i = 0; i < item.length; i++)
 {
-	item[i].position.y = item[i].position.y - 1;
-	item[i].position.x = item[i].position.x - 10;
+   item[i].position.y = item[i].position.y - 1;
+   item[i].position.x = item[i].position.x - 10;
 }
 
 var step = 0;
 
-   window.onload = function init()
+   // Get the pointer lock state
+   getPointerLock();
+   // Set up the game
+   init2();
+   // Start animating the scene
+   animate();
+
+   /*window.onload = function init()
    {
       var canvas = document.getElementById( "gl-canvas" );
     
@@ -203,39 +210,44 @@ var step = 0;
       gl.vertexAttribPointer( vPosition, 2, gl.FLOAT, false, 0, 0 );
       gl.enableVertexAttribArray( vPosition );
 
-      square();
+      //square();
 
-	  document.getElementById("Manual").onclick = function () {
-      console.log(event.button);
-        
-		};
 
-   document.getElementById("Game").onclick = function () {
-    console.log(event.button);
+   //document.getElementById("Game").onclick = function () {
+    //console.log(event.button);
 
-	// Get the pointer lock state
-	getPointerLock();
-	// Set up the game
-	init2();
-	// Start animating the scene
-	animate();
+   
 
     };
 
-   }; //windo
+   }; //windo*/
 
 
-function square() {
+/*function square() {
     gl.clear( gl.COLOR_BUFFER_BIT );
     gl.drawArrays( gl.TRIANGLE_FAN, 0, 4 );
-}
+}*/
 
 // Get the pointer lock and start listening for if its state changes
 function getPointerLock() {
+	var aud = document.getElementById("myAudio");
+
   document.onclick = function () {
     container.requestPointerLock();
+
+
+	function play() {
+		aud.play();
+	}
+
+	aud.play(); // this will do the trick :)
   }
-  document.addEventListener('pointerlockchange', lockChange, false); 
+  document.addEventListener('pointerlockchange', lockChange, false);
+
+
+
+
+
 }
 
 // Switch the controls on or off
@@ -256,6 +268,7 @@ function lockChange() {
 
 // Set up the game
 function init2() {
+
 
   // Set clock to keep track of frames
   clock = new THREE.Clock();
@@ -464,9 +477,9 @@ function createMazeWalls() {
     [1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, ],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ]];
 
-	swidthOffset = widthOffset / 4;
+   swidthOffset = widthOffset / 4;
 
-	// make many tree and flower
+   // make many tree and flower
    for(var i = 0; i < 5; i++)
    {
       xpos = Math.floor(Math.random() * totalCubesWide);
@@ -725,7 +738,7 @@ function createFlower(xpo, zpo) {
    flower.add(flow2);
    flower.add(flow3);
 
-   scene.add(flower);
+   //scene.add();
 }
 
 
